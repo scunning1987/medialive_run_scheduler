@@ -24,6 +24,7 @@ Parameters:
 
   Regions:
     Description: Enter the MediaLive regions you want this workflow to be applied for. Separate all regions with a comma, ie. us-west-2,us-east-1
+    Type: String
     Default: us-east-1,us-east-2
 
 ## Resources
@@ -78,16 +79,25 @@ Resources:
             Resource:
               - '*'
 
-  LambdaInvokedByEventBridge:
+  LambdaInvokedByEventBridgeStart:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt MediaLiveScheduleCleanup.Arn
+      FunctionName: !GetAtt MediaLiveStartStopFunction.Arn
       Action: lambda:InvokeFunction
       Principal: events.amazonaws.com
-      SourceArn: !GetAtt DailyScheduleCleanup.Arn
+      SourceArn: !GetAtt MediaLiveStartEvent.Arn
     DependsOn:
-      - MediaLiveScheduleCleanup
-      - DailyScheduleCleanup
+      - MediaLiveStartStopFunction
+
+  LambdaInvokedByEventBridgeStop:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt MediaLiveStartStopFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt MediaLiveStopEvent.Arn
+    DependsOn:
+      - MediaLiveStartStopFunction
 
   #################
   ## Lambda
@@ -257,7 +267,7 @@ Resources:
       Targets:
         - Arn: !GetAtt MediaLiveStartStopFunction.Arn
           Id: LambdaForMediaLiveStart
-          Input: {"Action":"Start"}
+          Input: '{"Action":"Start"}'
           RetryPolicy:
             MaximumRetryAttempts: 4
             MaximumEventAgeInSeconds: 600
@@ -273,7 +283,7 @@ Resources:
       Targets:
         - Arn: !GetAtt MediaLiveStartStopFunction.Arn
           Id: LambdaForMediaLiveStop
-          Input: {"Action":"Stop"}
+          Input: '{"Action":"Stop"}'
           RetryPolicy:
             MaximumRetryAttempts: 4
             MaximumEventAgeInSeconds: 600
