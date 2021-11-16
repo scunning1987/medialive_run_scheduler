@@ -135,7 +135,7 @@ Resources:
           OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
           SOFTWARE.
 
-          Summary: This script is a custom resource to place the HTML pages and Lambda code into the destination bucket.
+          Summary: This script will start or stop MediaLive channels in each specified region based on scheduled event input value
 
           Original Author: Scott Cunningham
           '''
@@ -296,4 +296,3 @@ Outputs:
   MediaLiveTagForWorkflow:
     Description: This value is what you need to use at your MediaLive channel Tag key in order for it to be applied in this schedule automation.
     Value: !Ref MediaLiveScheduleKey
-
